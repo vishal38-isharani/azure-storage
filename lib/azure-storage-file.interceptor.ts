@@ -9,10 +9,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import { Observable } from 'rxjs';
 import {
-  AzureStorageService,
   AzureStorageOptions,
+  AzureStorageService,
 } from './azure-storage.service';
 
 export function AzureStorageFileInterceptor(
@@ -31,8 +30,8 @@ export function AzureStorageFileInterceptor(
     async intercept(
       context: ExecutionContext,
       next: CallHandler,
-    ): Promise<Observable<any>> {
-      (await this.interceptor.intercept(context, next)) as Observable<any>;
+    ): Promise<any> {
+      (await this.interceptor.intercept(context, next)) as any;
 
       const request = context.switchToHttp().getRequest();
       const file = request[fieldName];
@@ -45,11 +44,10 @@ export function AzureStorageFileInterceptor(
         return next.handle();
       }
 
-      const storageUrl = await this.azureStorage.upload(
+      file.storageUrl = await this.azureStorage.upload(
         file,
         azureStorageOptions,
       );
-      file.storageUrl = storageUrl;
       return next.handle();
     }
   }

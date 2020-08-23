@@ -1,22 +1,51 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { AzureMulterStorageService } from './azure-multer.service';
 import { AZURE_STORAGE_MODULE_OPTIONS } from './azure-storage.constant';
 import {
   AzureStorageOptions,
   AzureStorageService,
 } from './azure-storage.service';
+import { ModuleMetadata } from '@nestjs/common/interfaces';
 
-const PUBLIC_PROVIDERS = [AzureMulterStorageService, AzureStorageService];
+interface AzureStorageModuleAsyncOptions
+  extends Pick<ModuleMetadata, 'imports'> {
+  useFactory?: (
+    ...args: any[]
+  ) => Promise<AzureStorageOptions> | AzureStorageOptions;
+  inject?: any[];
+}
+
+const PUBLIC_PROVIDERS = [AzureStorageService];
 
 @Module({
   providers: [...PUBLIC_PROVIDERS],
-  exports: [...PUBLIC_PROVIDERS, AZURE_STORAGE_MODULE_OPTIONS],
+  exports: [...PUBLIC_PROVIDERS],
 })
 export class AzureStorageModule {
   static withConfig(options: AzureStorageOptions): DynamicModule {
     return {
       module: AzureStorageModule,
-      providers: [{ provide: AZURE_STORAGE_MODULE_OPTIONS, useValue: options }],
+      providers: [
+        {
+          provide: AZURE_STORAGE_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
+    };
+  }
+
+  static withConfigAsync(
+    options: AzureStorageModuleAsyncOptions,
+  ): DynamicModule {
+    return {
+      module: AzureStorageModule,
+      imports: options.imports || [],
+      providers: [
+        {
+          provide: AZURE_STORAGE_MODULE_OPTIONS,
+          useFactory: options.useFactory,
+          inject: options.inject || [],
+        },
+      ],
     };
   }
 }
