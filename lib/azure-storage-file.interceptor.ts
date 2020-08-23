@@ -10,9 +10,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import {
-  AzureStorageOptions,
   AzureStorageService,
 } from './azure-storage.service';
+import { AzureStorageOptions } from './azure-nest-storage.interface';
 
 export function AzureStorageFileInterceptor(
   fieldName: string,

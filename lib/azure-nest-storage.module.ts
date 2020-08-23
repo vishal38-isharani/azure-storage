@@ -1,10 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { AZURE_STORAGE_MODULE_OPTIONS } from './azure-storage.constant';
 import {
-  AzureStorageOptions,
   AzureStorageService,
 } from './azure-storage.service';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { AzureStorageOptions } from './azure-nest-storage.interface';
 
 interface AzureStorageModuleAsyncOptions
   extends Pick<ModuleMetadata, 'imports'> {
